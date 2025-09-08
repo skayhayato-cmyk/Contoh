@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sheckless Hub</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#111; color:#fff; margin:0; }
+    h1,h2,h3 { text-align:center; }
+
+    /* Sidebar */
+    #sidebar {
+      position: fixed; top:0; left:-250px; width:250px; height:100%;
+      background:#1a1a1a; transition:.3s; z-index:200; padding-top:60px;
+    }
+    #sidebar.active { left:0; }
+    #sidebar h3 { color:gold; margin:10px; text-align:left; }
+    #sidebar a, #sidebar button {
+      display:block; width:90%; margin:10px auto; padding:12px;
+      background:#333; color:#fff; border:none; border-radius:6px;
+      text-align:left; cursor:pointer;
+    }
+    #sidebar a:hover, #sidebar button:hover { background:gold; color:#111; }
+
+    #menuBtn {
+      position:fixed; top:15px; left:15px;
+      font-size:26px; background:none; border:none; color:gold;
+      cursor:pointer; z-index:201;
+    }
+
+    /* Section control */
+    .section { display:none; padding:20px; }
+    .active-section { display:block; }
+
+    /* Landing Page */
+    #homeSection {
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      height:100vh; text-align:center;
+    }
+    #homeSection h1 { font-size:42px; color:gold; animation: glow 2s infinite alternate; }
+    #homeSection p { font-size:18px; margin:20px 0; }
+    #homeSection button { padding:14px 24px; font-size:18px; border-radius:10px; }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 10px gold, 0 0 20px gold; }
+      to { text-shadow: 0 0 20px orange, 0 0 40px orange; }
+    }
+
+    /* Spin Wheel */
+    canvas { margin-top:30px; background:#222; border-radius:50%; }
+    button {
+      padding:12px 20px; margin-top:15px;
+      border:none; border-radius:8px;
+      font-size:16px; font-weight:bold;
+      background:gold; color:#111; cursor:pointer;
+    }
+    #loginBox { margin-top:100px; background:#222; padding:20px; border-radius:10px; display:inline-block; }
+    input { padding:10px; margin:10px; border:none; border-radius:5px; }
+    #adminPanel {
+      position:fixed; top:80px; right:20px; background:#222;
+      border-radius:10px; padding:15px; display:none; z-index:300; width:250px;
+    }
+    #pwDisplay { font-size:22px; margin-top:15px; font-weight:bold; color:lightgreen; }
+
+    #prizeModal { position:fixed; top:0; left:0; width:100%; height:100%;
+      background:rgba(0,0,0,0.7); display:none; align-items:center; justify-content:center; z-index:400; }
+    #prizeModal .content { background:#222; padding:20px; border-radius:10px; text-align:center; width:300px; }
+
+    /* Shop */
+    .shop-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(180px,1fr)); gap:20px; margin:20px; }
+    .shop-item { background:#222; padding:15px; border-radius:10px; text-align:center; transition:transform .2s; }
+    .shop-item:hover { transform:scale(1.05); }
+    .shop-item img { width:100px; margin-bottom:10px; }
+    .shop-item p { margin:5px 0; }
+    .price { color:gold; font-weight:bold; }
+    .shop-item button { background:#ff9800; color:#fff; margin-top:10px; padding:8px 12px; border:none; border-radius:5px; cursor:pointer; }
+    .shop-item button:hover { background:#e68900; }
+    .form-box { background:#222; margin:20px; padding:15px; border-radius:10px; }
+    .form-group { margin-bottom:12px; }
+    .form-group label { display:block; margin-bottom:5px; }
+    .form-group input,.form-group select { width:100%; padding:8px; border:1px solid #555; border-radius:5px; background:#333; color:#fff; }
+  </style>
+</head>
+<body>
+  <button id="menuBtn" onclick="toggleSidebar()">☰</button>
+
+  <div id="sidebar">
+    <h3>Menu</h3>
+    <button onclick="showSection('homeSection')">🏠 Home</button>
+    <button onclick="showSection('wheelSection')">🎡 Spin Wheel</button>
+    <button onclick="showSection('shopSection')">💰 Sheckless Shop</button>
+    <button onclick="showSection('PetSection')">🐾Pet Shop</button>
+    <a href="https://discord.gg/yourserver" target="_blank">💬 | Join Discord</a>
+    <button onclick="toggleMusic()">🎵 Musik</button>
+    <button onclick="toggleAdmin()">🜲️ Admin Panel</button>
+  </div>
+
+  <!-- PAGE AWAL -->
+  <div id="homeSection" class="section active-section">
+    <h1>✨ Selamat Datang di Zen ✨</h1>
+    <p>Tempat  Belanja Item Blox Fruit Favoritmu & GROW A GARDEN 🎡💰</p>
+    <p>Setiap Bergabung Ke Discord Akan mendapatkan 1x Spin<p>
+    <button onclick="showSection('wheelSection')">🎮 Mulai Sekarang</button>
+  </div>
+
+  <!-- SPIN WHEEL -->
+  <div id="wheelSection" class="section">
+    <h1>Zen Shop Gacha - Blox Fruit</h1>
+    <div id="loginBox">
+      <p>Masukkan Kode dari Admin:</p>
+      <input type="password" id="userPW" placeholder="Kode Member">
+      <button onclick="cekPW()">Masuk</button>
+    </div>
+    <div id="wheelBox" style="display:none;">
+      <h2>Putar Roda 🎡</h2>
+      <canvas id="wheel" width="400" height="400"></canvas><br>
+      <button onclick="spin()" id="spinBtn">SPIN</button>
+      <p id="hasil"></p>
+    </div>
+  </div>
+
+  <!-- SHOP -->
+  <div id="shopSection" class="section">
+    <h1>💰 Sheckless Shop</h1>
+    <div class="form-box">
+      <h3>Informasi Pembeli</h3>
+      <div class="form-group">
+        <label>Username Roblox</label>
+        <input type="text" id="username" placeholder="Masukkan username Roblox">
+      </div>
+      <div class="form-group">
+        <label>💳 Pilih Payment</label>
+        <select id="payment">
+          <option value="">-- Pilih Metode --</option>
+          <option value="Dana">Dana</option>
+          <option value="QRIS">QRIS</option>
+          <option value="Saweria">Saweria</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="shop-grid">
+      <div class="shop-item">
+        <img src="https://i.ibb.co.com/6Jsgy7XS/1757092095824.png"><h3>20 Sx Coin</h3><p class="price">Rp5.000</p>
+        <button onclick="orderWA('20 Sx Coin','Rp5.000')">Beli Sekarang</button>
+      </div>
+      <div class="shop-item">
+        <img src="https://i.ibb.co.com/Cs0hw3Py/1757092095824.png"><h3>30 Sx Coin</h3><p class="price">Rp7.500</p>
+        <button onclick="orderWA('30 Sx Coin','Rp7.500')">Beli Sekarang</button>
+      </div>
+      <div class="shop-item">
+        <img src="https://i.ibb.co.com/6Jsgy7XS/1757092095824.png"><h3>50 Sx Coin</h3><p class="price">Rp12.500</p>
+        <button onclick="orderWA('50 Sx Coin','Rp12.500')">Beli Sekarang</button>
+      </div>
+      <div class="shop-item">
+        <img src="https://i.ibb.co.com/6Jsgy7XS/1757092095824.png"><h3>100 Sx Coin</h3><p class="price">Rp25.000</p>
+        <button onclick="orderWA('100 Sx Coin','Rp25.000')">Beli Sekarang</button>
+      </div>
+    </div>
+  </div>
+  
+    <!-- PET SHOP -->
+<div id="PetSection" class="section">  
+  <h1>🐾Pet Shop</h1>  
+  <div class="form-box">  
+    <h3>Informasi Pembeli</h3>  
+    <div class="form-group">  
+      <label>Username Roblox</label>  
+      <input type="text" id="petUsername" placeholder="Masukkan username Roblox">  
+    </div>  
+    <div class="form-group">  
+      <label>💳 Pilih Payment</label>  
+      <select id="petPayment">  
+        <option value="">-- Pilih Metode --</option>  
+        <option value="Dana">Dana</option>  
+        <option value="QRIS">QRIS</option>  
+        <option value="Saweria">Saweria</option>  
+      </select>  
+    </div>  
+  </div>  
+
+  <div class="shop-grid">  
+    <div class="shop-item">  
+      <img src="https://i.ibb.co.com/Tx4ZGLyz/20250906-003056.jpg">
+      <h3>MOONCAT</h3>
+      <h3>Stock: 1</h3>
+      <p class="price">Rp5.000</p>  
+      <button onclick="pet('Mooncat','Rp5.000')">Beli Sekarang</button>  
+    </div>  
+    <div class="shop-item">  
+      <img src="https://i.ibb.co.com/Tx4ZGLyz/20250906-003056.jpg">
+      <h3></h3>
+      <p class="price">Rp7.500</p>  
+      <button onclick="pet('30 Sx Coin','Rp7.500')">Beli Sekarang</button>  
+    </div>  
+    <div class="shop-item">  
+      <img src="https://i.ibb.co.com/Tx4ZGLyz/20250906-003056.jpg">
+      <h3>50 Sx Coin</h3>
+      <p class="price">Rp12.500</p>  
+      <button onclick="pet('50 Sx Coin','Rp12.500')">Beli Sekarang</button>  
+    </div>  
+    <div class="shop-item">  
+      <img src="https://i.ibb.co.com/Tx4ZGLyz/20250906-003056.jpg">
+      <h3>100 Sx Coin</h3>
+      <p class="price">Rp25.000</p>  
+      <button onclick="pet('100 Sx Coin','Rp25.000')">Beli Sekarang</button>  
+    </div>  
+  </div>  
+</div>
+
+  <!-- Admin Panel -->
+  <div id="adminPanel">
+    <h3>⚙️ Admin Panel</h3>
+    <button onclick="generatePW()">Generate Code</button>
+    <p id="pwDisplay">Belum digenerate</p>
+    <h4>📜 Riwayat Hadiah</h4>
+    <div id="adminLogs" style="max-height:200px;overflow:auto;font-size:14px;"></div>
+  </div>
+
+  <!-- Modal Prize -->
+  <div id="prizeModal">
+    <div class="content">
+      <h2>🎁 Selamat!</h2>
+      <p id="prizeText"></p>
+      <p id="prizeCode" style="color:lightgreen;font-weight:bold;"></p>
+      <button onclick="claimPrize()">Klaim Hadiah</button>
+    </div>
+  </div>
+
+<script>
+function toggleSidebar(){ document.getElementById("sidebar").classList.toggle("active"); }
+function showSection(id){
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active-section"));
+  document.getElementById(id).classList.add("active-section");
+  toggleSidebar();
+}
+
+/* 🔹 fungsi order WA untuk shop */
+function orderWA(produk,harga){
+  let username=document.getElementById("username").value;
+  let payment=document.getElementById("payment").value;
+  if(!username||!payment){ alert("Isi Username & pilih pembayaran!"); return; }
+  let nomorWA="6283119176901";
+  let pesan=`Halo Admin, saya mau beli:\n\n🪙 Produk: ${produk}\n💰 Harga: ${harga}\n👤 Username Roblox: ${username}\n💳 Payment: ${payment}\n\nTolong diproses ya 🙏`;
+  window.location.href=`https://wa.me/${nomorWA}?text=${encodeURIComponent(pesan)}`;
+}
+
+/* 🔹 fungsi pet untuk Pet Shop */
+function pet(produk,harga){  
+  let username=document.getElementById("petUsername").value;  
+  let payment=document.getElementById("petPayment").value;  
+  if(!username||!payment){  
+    alert("Isi Username & pilih pembayaran di Pet Shop!");  
+    return;  
+  }  
+  let nomorWA="6283119176901";  
+  let pesan=`Halo Admin, saya mau beli (Pet Shop):\n\n🐾 Produk: ${produk}\n💰 Harga: ${harga}\n👤 Username Roblox: ${username}\n💳 Payment: ${payment}\n\nTolong diproses ya 🙏`;  
+  window.location.href=`https://wa.me/${nomorWA}?text=${encodeURIComponent(pesan)}`;  
+}
+
+/* ?? kode spin wheel */
+const names=["Ali","Beatriz","Charles","Diya","Eric","Fatima","Gabriel","Hanna","Buah","Jeruk","Nanas","Pisang"];
+const colors=["#f44336","#2196f3","#4caf50","#ffeb3b","#9c27b0","#ff9800","#00bcd4","#e91e63","#ff5722","#3f51b5","#ED8B10","#ffc107"];
+let startAngle=0,arc=Math.PI/(names.length/2),spinAngle=0,spinTimeout=null,lastSoundIndex=-1;
+const canvas=document.getElementById("wheel"),ctx=canvas.getContext("2d");
+const cajche=new Audio("https://www.soundjay.com/mechanical/sounds/click-02.mp3"); 
+const spinStart=new Audio("https://www.soundjay.com/button/sounds/button-09.mp3");
+const winSound=new Audio("https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3");
+const loseSound=new Audio("https://www.soundjay.com/button/sounds/beep-07.mp3");
+
+const bgMusic=new Audio("https://www.bensound.com/bensound-music/bensound-funkyelement.mp3"); bgMusic.loop=true; let musicOn=false;
+function toggleMusic(){ musicOn?bgMusic.pause():bgMusic.play(); musicOn=!musicOn; }
+
+const fruitChances={ "Buah":0.007, "Jeruk":0.01, "Nanas":0.011, "Pisang":0.015 };
+
+function drawWheel(){ let outsideRadius=180,textRadius=140,insideRadius=50; ctx.clearRect(0,0,400,400);
+  for(let i=0;i<names.length;i++){ let angle=startAngle+i*arc; ctx.fillStyle=colors[i%colors.length];
+    ctx.beginPath(); ctx.arc(200,200,outsideRadius,angle,angle+arc,false); ctx.arc(200,200,insideRadius,angle+arc,angle,true); ctx.fill(); ctx.save();
+    ctx.fillStyle="white"; ctx.translate(200+Math.cos(angle+arc/2)*textRadius,200+Math.sin(angle+arc/2)*textRadius); ctx.rotate(angle+arc/2);
+    let text=names[i]; ctx.fillText(text,-ctx.measureText(text).width/2,0); ctx.restore();}
+  ctx.fillStyle="gold"; ctx.beginPath(); ctx.moveTo(190,20); ctx.lineTo(210,20); ctx.lineTo(200,60); ctx.fill(); }
+
+function rotateWheel(){ spinAngle*=0.97; if(spinAngle<=0.2){ clearTimeout(spinTimeout);
+  let degrees=(startAngle*180/Math.PI)+90; let arcd=(arc*180/Math.PI);
+  let index=Math.floor(((360-(degrees%360))%360)/arcd); index=(index+names.length)%names.length;
+  let winner=names[index]; let hasil=document.getElementById("hasil");
+  if(fruitChances[winner]){ let roll=Math.random();
+    if(roll<=fruitChances[winner]){ hasil.innerText="🍀 JACKPOT!!! "+winner; winSound.play(); showPrizeModal(winner);}
+    else{ hasil.innerText="😢 Hampir dapat "+winner; loseSound.play();}}
+  else{ hasil.innerText="🎉 Pemenang: "+winner; winSound.play(); showPrizeModal(winner);}
+  localStorage.removeItem("memberCode"); return;}
+  startAngle+=(spinAngle*Math.PI)/180;
+  let degrees=(startAngle*180)/Math.PI+90; let arcd=(arc*180)/Math.PI;
+  let currentIndex=Math.floor(((360-degrees%360)%360)/arcd);
+  if(currentIndex!==lastSoundIndex){ cajche.currentTime=0; cajche.play(); lastSoundIndex=currentIndex; }
+  drawWheel(); spinTimeout=setTimeout(rotateWheel,30); }
+
+function spin(){ if(document.getElementById("spinBtn").disabled) return;
+  document.getElementById("spinBtn").disabled=true; spinAngle=Math.random()*30+40; lastSoundIndex=-1; spinStart.play(); rotateWheel(); }
+
+function cekPW(){ const input=document.getElementById("userPW").value; const saved=localStorage.getItem("memberCode");
+  if(!saved){ alert("Kode salah atau belum dibuat!"); return; }
+  const {code,expiry}=JSON.parse(saved); if(Date.now()>expiry){ alert("⏰ Kode expired!"); localStorage.removeItem("memberCode"); return; }
+  if(input===code){ document.getElementById("loginBox").style.display="none"; document.getElementById("wheelBox").style.display="block"; drawWheel(); }
+  else alert("Kode salah!"); }
+
+function toggleAdmin(){ const panel=document.getElementById("adminPanel");
+  if(panel.style.display==="block"){ panel.style.display="none"; }
+  else{ let pw=prompt("Masukkan password admin:"); if(pw==="Gobel123"){ panel.style.display="block"; loadAdminLogs(); } else alert("Password salah!"); } }
+
+function generatePW(){ const code=Math.random().toString(36).slice(-6).toUpperCase(); const expiry=Date.now()+(5*60*1000);
+  document.getElementById("pwDisplay").innerText=code; localStorage.setItem("memberCode",JSON.stringify({code,expiry})); }
+
+function showPrizeModal(prize){ let code="PRZ-"+Math.random().toString(36).substr(2,6).toUpperCase();
+  document.getElementById("prizeText").innerText="Kamu mendapatkan: "+prize; document.getElementById("prizeCode").innerText="Kode Klaim: "+code;
+  document.getElementById("prizeModal").style.display="flex";
+  let logs=JSON.parse(localStorage.getItem("adminLogs")||"[]"); logs.unshift({prize,code,time:new Date().toLocaleString()}); localStorage.setItem("adminLogs",JSON.stringify(logs)); }
+
+function claimPrize(){ alert("✅ Hadiah berhasil diklaim! Screenshot dan hubungi admin."); document.getElementById("prizeModal").style.display="none"; }
+
+function loadAdminLogs(){ const logs=JSON.parse(localStorage.getItem("adminLogs")||"[]"); let html=""; logs.forEach(l=>{ html+=`<div>🎁 ${l.prize}<br><small>${l.code} - ${l.time}</small></div><hr>`; });
+  document.getElementById("adminLogs").innerHTML=html||"<i>Belum ada hadiah</i>"; }
+</script>
+</body>
+</html>
