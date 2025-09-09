@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sheckless Hub</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #111;
+      --secondary: #1a1a1a;
+      --accent: #FFD700;
+      --accent-dark: #D4AF37;
+      --text: #fff;
+      --text-secondary: #aaa;
+      --card-bg: #222;
+      --success: #4CAF50;
+      --danger: #f44336;
+      --border-radius: 12px;
+      --transition: all 0.3s ease;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      --glow: 0 0 15px rgba(255, 215, 0, 0.5);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--primary);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 215, 0, 0.03) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(255, 215, 0, 0.03) 0%, transparent 20%);
+    }
+    
+    h1, h2, h3 {
+      text-align: center;
+      margin-bottom: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    
+    h1 {
+      font-size: 2.8rem;
+      background: linear-gradient(45deg, var(--accent), var(--accent-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+      margin-bottom: 1.5rem;
+    }
+    
+    h2 {
+      font-size: 2rem;
+      color: var(--accent);
+    }
+    
+    h3 {
+      font-size: 1.5rem;
+      color: var(--accent);
+      text-align: left;
+      margin: 0 0 1rem 0;
+    }
+    
+    p {
+      margin-bottom: 1rem;
+      color: var(--text-secondary);
+    }
+    
+    /* Sidebar */
+    #sidebar {
+      position: fixed;
+      top: 0;
+      left: -300px;
+      width: 300px;
+      height: 100%;
+      background: var(--secondary);
+      transition: var(--transition);
+      z-index: 1000;
+      padding-top: 80px;
+      box-shadow: 5px 0 25px rgba(0, 0, 0, 0.5);
+      overflow-y: auto;
+    }
+    
+    #sidebar.active {
+      left: 0;
+    }
+    
+    #sidebar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 70px;
+      background: linear-gradient(to bottom, rgba(26, 26, 26, 1), rgba(26, 26, 26, 0.9));
+      z-index: -1;
+    }
+    
+    #sidebar h3 {
+      padding: 0 20px;
+      color: var(--accent);
+      font-size: 1.4rem;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+    
+    #sidebar a, #sidebar button {
+      display: flex;
+      align-items: center;
+      width: 90%;
+      margin: 12px auto;
+      padding: 15px 20px;
+      background: rgba(51, 51, 51, 0.8);
+      color: var(--text);
+      border: none;
+      border-radius: var(--border-radius);
+      text-align: left;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 1rem;
+      font-weight: 500;
+    }
+    
+    #sidebar a:hover, #sidebar button:hover {
+      background: var(--accent);
+      color: var(--primary);
+      transform: translateX(5px);
+      box-shadow: var(--glow);
+    }
+    
+    #sidebar i {
+      margin-right: 12px;
+      font-size: 1.2rem;
+      width: 24px;
+      text-align: center;
+    }
+    
+    #menuBtn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      font-size: 28px;
+      background: rgba(0, 0, 0, 0.5);
+      border: none;
+      color: var(--accent);
+      cursor: pointer;
+      z-index: 1001;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      box-shadow: var(--shadow);
+    }
+    
+    #menuBtn:hover {
+      background: var(--accent);
+      color: var(--primary);
+      transform: rotate(90deg);
+    }
+    
+    /* Section control */
+    .section {
+      display: none;
+      padding: 30px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .active-section {
+      display: block;
+    }
+    
+    /* Landing Page */
+    #homeSection {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 40px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    #homeSection::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, rgba(26, 26, 26, 0.8) 0%, rgba(17, 17, 17, 1) 70%);
+      z-index: -1;
+    }
+    
+    #homeSection h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1.5rem;
+      animation: glow 2s infinite alternate;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    
+    #homeSection p {
+      font-size: 1.3rem;
+      margin: 20px 0 40px;
+      max-width: 700px;
+      color: var(--text-secondary);
+    }
+    
+    #homeSection button {
+      padding: 16px 32px;
+      font-size: 1.2rem;
+      border-radius: 50px;
+      background: linear-gradient(45deg, var(--accent), var(--accent-dark));
+      color: var(--primary);
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: bold;
+      letter-spacing: 1px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    #homeSection button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: 0.5s;
+    }
+    
+    #homeSection button:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(255, 215, 0, 0.4);
+    }
+    
+    #homeSection button:hover::before {
+      left: 100%;
+    }
+    
+    @keyframes glow {
+      from { 
+        text-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent); 
+      }
+      to { 
+        text-shadow: 0 0 20px var(--accent-dark), 0 0 40px var(--accent-dark), 0 0 60px var(--accent-dark); 
+      }
+    }
+    
+    /* Spin Wheel */
+    .wheel-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+      background: rgba(34, 34, 34, 0.7);
+      border-radius: var(--border-radius);
+      margin: 20px auto;
+      max-width: 600px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    
+    canvas {
+      margin: 30px 0;
+      background: var(--card-bg);
+      border-radius: 50%;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+      transition: var(--transition);
+    }
+    
+    canvas:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 40px rgba(255, 215, 0, 0.2);
+    }
+    
+    button {
+      padding: 14px 28px;
+      margin: 15px 0;
+      border: none;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: bold;
+      background: linear-gradient(45deg, var(--accent), var(--accent-dark));
+      color: var(--primary);
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: var(--shadow);
+    }
+    
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3);
+    }
+    
+    button:disabled {
+      background: #666;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    #loginBox {
+      margin: 40px auto;
+      background: var(--card-bg);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 400px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 215, 0, 0.2);
+    }
+    
+    input, select {
+      padding: 12px 16px;
+      margin: 10px 0;
+      border: 1px solid #444;
+      border-radius: var(--border-radius);
+      background: rgba(51, 51, 51, 0.8);
+      color: var(--text);
+      width: 100%;
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+    
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+    }
+    
+    #adminPanel {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      display: none;
+      z-index: 900;
+      width: 320px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    
+    #pwDisplay {
+      font-size: 1.4rem;
+      margin: 15px 0;
+      font-weight: bold;
+      color: var(--success);
+      text-align: center;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: var(--border-radius);
+      letter-spacing: 2px;
+    }
+    
+    /* Shop */
+    .shop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 25px;
+      margin: 30px 0;
+    }
+    
+    .shop-item {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: var(--border-radius);
+      text-align: center;
+      transition: var(--transition);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .shop-item:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+      border-color: rgba(255, 215, 0, 0.3);
+    }
+    
+    .shop-item img {
+      width: 100%;
+      max-width: 150px;
+      height: auto;
+      margin: 0 auto 15px;
+      border-radius: 10px;
+      object-fit: cover;
+      transition: var(--transition);
+    }
+    
+    .shop-item:hover img {
+      transform: scale(1.05);
+    }
+    
+    .shop-item p {
+      margin: 8px 0;
+    }
+    
+    .price {
+      color: var(--accent);
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin: 10px 0;
+    }
+    
+    .shop-item button {
+      background: linear-gradient(45deg, #ff9800, #e68900);
+      color: var(--text);
+      margin-top: auto;
+      padding: 12px;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: 600;
+    }
+    
+    .shop-item button:hover {
+      background: linear-gradient(45deg, #e68900, #ff9800);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(255, 152, 0, 0.4);
+    }
+    
+    .form-box {
+      background: var(--card-bg);
+      margin: 30px 0;
+      padding: 25px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #444;
+      border-radius: var(--border-radius);
+      background: rgba(51, 51, 51, 0.8);
+      color: var(--text);
+      font-size: 1rem;
+    }
+    
+    /* Modal Prize */
+    #prizeModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      backdrop-filter: blur(5px);
+    }
+    
+    #prizeModal .content {
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: var(--border-radius);
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 0 50px rgba(255, 215, 0, 0.3);
+      border: 2px solid var(--accent);
+      animation: modalAppear 0.5s ease;
+    }
+    
+    @keyframes modalAppear {
+      from { opacity: 0; transform: scale(0.8) translateY(-50px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    
+    #prizeText {
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+      color: var(--accent);
+    }
+    
+    #prizeCode {
+      color: var(--success);
+      font-weight: bold;
+      font-size: 1.3rem;
+      margin: 20px 0;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: var(--border-radius);
+      letter-spacing: 2px;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+      
+      h2 {
+        font-size: 1.8rem;
+      }
+      
+      #sidebar {
+        width: 260px;
+        left: -260px;
+      }
+      
+      .shop-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+      }
+      
+      #homeSection {
+        padding: 20px 15px;
+      }
+      
+      #homeSection h1 {
+        font-size: 2.5rem;
+      }
+      
+      #homeSection p {
+        font-size: 1.1rem;
+      }
+      
+      .wheel-container {
+        padding: 20px 15px;
+      }
+      
+      canvas {
+        width: 300px;
+        height: 300px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 2rem;
+      }
+      
+      #homeSection h1 {
+        font-size: 2rem;
+      }
+      
+      .shop-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      canvas {
+        width: 250px;
+        height: 250px;
+      }
+      
+      #adminPanel {
+        width: 90%;
+        right: 5%;
+        left: 5%;
+      }
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: var(--secondary);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 5px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-dark);
+    }
+    
+    /* Particle background effect */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+    
+    .particle {
+      position: absolute;
+      background: var(--accent);
+      border-radius: 50%;
+      opacity: 0.3;
+      animation: float 15s infinite linear;
+    }
+    
+    @keyframes float {
+      0% {
+        transform: translateY(0) translateX(0) rotate(0deg);
+        opacity: 0.3;
+      }
+      100% {
+        transform: translateY(-100vh) translateX(100vw) rotate(360deg);
+        opacity: 0;
+      }
+    }
+    
+    /* Notification toast */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      background: var(--card-bg);
+      color: var(--text);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      z-index: 1000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: var(--transition);
+      border-left: 4px solid var(--accent);
+    }
+    
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    /* Loading spinner */
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255, 215, 0, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--accent);
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="particles" id="particles"></div>
+  
+  <button id="menuBtn" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <div id="sidebar">
+    <h3><i class="fas fa-gamepad"></i> Menu Sheckless</h3>
+    <button onclick="showSection('homeSection')"><i class="fas fa-home"></i> Home</button>
+    <button onclick="showSection('wheelSection')"><i class="fas fa-dice"></i> Spin Wheel</button>
+    <button onclick="showSection('shopSection')"><i class="fas fa-shopping-cart"></i> Sheckless Shop</button>
+    <button onclick="showSection('PetSection')"><i class="fas fa-paw"></i> Pet Shop</button>
+    <a href="https://discord.gg/yourserver" target="_blank"><i class="fab fa-discord"></i> Join Discord</a>
+    <button onclick="toggleMusic()"><i class="fas fa-music"></i> Musik</button>
+    <button onclick="toggleAdmin()"><i class="fas fa-lock"></i> Admin Panel</button>
+  </div>
+
+  <!-- PAGE AWAL -->
+  <div id="homeSection" class="section active-section">
+    <h1>✨ Selamat Datang di Zen ✨</h1>
+    <p>Tempat Belanja Item Blox Fruit Favoritmu & GROW A GARDEN 🎡💰</p>
+    <button onclick="showSection('wheelSection')">
+      <i class="fas fa-play"></i> Mulai Sekarang
+    </button>
+  </div>
+
+  <!-- SPIN WHEEL -->
+  <div id="wheelSection" class="section">
+    <h1>Zen Shop Gacha - Blox Fruit</h1>
+    
+    <div id="loginBox">
+      <h3><i class="fas fa-key"></i> Masukkan Kode</h3>
+      <div class="form-group">
+        <input type="password" id="userPW" placeholder="Kode Member">
+      </div>
+      <button onclick="cekPW()"><i class="fas fa-sign-in-alt"></i> Masuk</button>
+    </div>
+    
+    <div id="wheelBox" style="display:none;">
+      <div class="wheel-container">
+        <h2><i class="fas fa-dice"></i> Putar Roda Keberuntungan</h2>
+        <canvas id="wheel" width="400" height="400"></canvas>
+        <button onclick="spin()" id="spinBtn">
+          <i class="fas fa-redo"></i> SPIN
+        </button>
+        <p id="hasil"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHOP -->
+  <div id="shopSection" class="section">
+    <h1><i class="fas fa-shopping-cart"></i> Sheckless Shop</h1>
+    
+    <div class="form-box">
+      <h3><i class="fas fa-user"></i> Informasi Pembeli</h3>
+      <div class="form-group">
+        <label>Username Roblox</label>
+        <input type="text" id="username" placeholder="Masukkan username Roblox">
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-credit-card"></i> Pilih Payment</label>
+        <select id="payment">
+          <option value="">-- Pilih Metode --</option>
+          <option value="Dana">Dana</option>
+          <option value="QRIS">QRIS</option>
+          <option value="Saweria">Saweria</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="shop-grid">
+      <div class="shop-item">
+        <img src="https://i.ibb.co.com/6Jsgy7XS/1757092095824.png" alt="20 Sx Coin">
+        <h3>20 Sx Coin</h3>
+        <p class="price">Rp5.000</p>
+        <button onclick="orderWA('20 Sx Coin','Rp5.000')">
+          <i class="fas fa-shopping-cart"></i> Beli Sekarang
+        </button>
+      </div>
+      
+      <div class="shop-item">
+        <img src="https://i.ibb.co.com/Cs0hw3Py/1757092095824.png" alt="30 Sx Coin">
+        <h3>30 Sx Coin</h3>
+        <p class="price">Rp7.500</p>
+        <button onclick="orderWA('30 Sx Coin','Rp7.500')">
+          <i class="fas fa-shopping-cart"></i> Beli Sekarang
+        </button>
+      </div>
+      
+      <div class="shop-item">
+        <img src="https://i.ibb.co.com/6Jsgy7XS/1757092095824.png" alt="50 Sx Coin">
+        <h3>50 Sx Coin</h3>
+        <p class="price">Rp12.500</p>
+        <button onclick="orderWA('50 Sx Coin','Rp12.500')">
+          <i class="fas fa-shopping-cart"></i> Beli Sekarang
+        </button>
+      </div>
+      
+      <div class="shop-item">
+        <img src="https://i.ibb.co.com/6Jsgy7XS/1757092095824.png" alt="100 Sx Coin">
+        <h3>100 Sx Coin</h3>
+        <p class="price">Rp25.000</p>
+        <button onclick="orderWA('100 Sx Coin','Rp25.000')">
+          <i class="fas fa-shopping-cart"></i> Beli Sekarang
+        </button>
+      </div>
+    </div>
+  </div>
+  
+    <!-- PET SHOP -->
+  <div id="PetSection" class="section">  
+    <h1><i class="fas fa-paw"></i> Pet Shop</h1>  
+    
+    <div class="form-box">  
+      <h3><i class="fas fa-user"></i> Informasi Pembeli</h3>  
+      <div class="form-group">  
+        <label>Username Roblox</label>  
+        <input type="text" id="petUsername" placeholder="Masukkan username Roblox">  
+      </div>  
+      <div class="form-group">  
+        <label><i class="fas fa-credit-card"></i> Pilih Payment</label>  
+        <select id="petPayment">  
+          <option value="">-- Pilih Metode --</option>  
+          <option value="Dana">Dana</option>  
+          <option value="QRIS">QRIS</option>  
+          <option value="Saweria">Saweria</option>  
+        </select>  
+      </div>  
+    </div>  
+
+    <div class="shop-grid">  
+      <div class="shop-item">  
+        <img src="https://i.ibb.co.com/Tx4ZGLyz/20250906-003056.jpg" alt="MOONCAT">
+        <h3>MOONCAT</h3>
+        <p class="stock">Stock: 1</p>
+        <p class="price">Rp5.000</p>  
+        <button onclick="pet('MOONCAT','Rp5.000')">
+          <i class="fas fa-shopping-cart"></i> Beli Sekarang
+        </button>  
+      </div>  
+
+      <div class="shop-item">  
+        <img src="https://i.ibb.co.com/Tx4ZGLyz/20250906-003056.jpg" alt="DILOPOSOURUS">
+        <h3>DILOPOSOURUS</h3>
+        <p class="stock">Stock: 1</p>
+        <p class="price">Rp8.000</p>  
+        <button onclick="pet('DILOPOSOURUS','Rp8.000')">
+          <i class="fas fa-shopping-cart"></i> Beli Sekarang
+        </button>  
+      </div>  
+
+      <div class="shop-item">  
+        <img src="https://i.ibb.co.com/Tx4ZGLyz/20250906-003056.jpg" alt="OSTRICH">
+        <h3>OSTRICH</h3>
+        <p class="stock">Stock: 7</p>
+        <p class="price">Rp2.000</p>  
+        <button onclick="pet('OSTRICH','Rp2.000')">
+          <i class="fas fa-shopping-cart"></i> Beli Sekarang
+        </button>  
+      </div>  
+
+      <div class="shop-item">  
+        <img src="https://i.ibb.co.com/Tx4ZGLyz/20250906-003056.jpg" alt="SINNI CAPYBARA">
+        <h3>SINNI CAPYBARA</h3>
+        <p class="stock">Stock: 1</p>
+        <p class="price">Rp3.000</p>  
+        <button onclick="pet('SINNI CAPYBARA','Rp3.000')">
+          <i class="fas fa-shopping-cart"></i> Beli Sekarang
+        </button>
+      </div>  
+
+      <div class="shop-item">  
+        <img src="https://i.ibb.co.com/Tx4ZGLyz/20250906-003056.jpg" alt="HOTDOG DASCHUND">
+        <h3>HOTDOG DASCHUND</h3>
+        <p class="stock">Stock: 4</p>
+        <p class="price">Rp4.000</p>  
+        <button onclick="pet('HOTDOG DASCHUND','Rp4.000')">
+          <i class="fas fa-shopping-cart"></i> Beli Sekarang
+        </button> 
+      </div>  
+    </div>  
+  </div>
+
+  <!-- Admin Panel -->
+  <div id="adminPanel">
+    <h3><i class="fas fa-lock"></i> Admin Panel</h3>
+    <button onclick="generatePW()"><i class="fas fa-key"></i> Generate Code</button>
+    <p id="pwDisplay">Belum digenerate</p>
+    <h4><i class="fas fa-history"></i> Riwayat Hadiah</h4>
+    <div id="adminLogs" style="max-height:200px;overflow:auto;font-size:14px;"></div>
+  </div>
+
+  <!-- Modal Prize -->
+  <div id="prizeModal">
+    <div class="content">
+      <h2><i class="fas fa-gift"></i> Selamat!</h2>
+      <p id="prizeText"></p>
+      <p id="prizeCode"></p>
+      <button onclick="claimPrize()"><i class="fas fa-check"></i> Klaim Hadiah</button>
+    </div>
+  </div>
+  
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+<script>
+// Create particle background
+function createParticles() {
+  const container = document.getElementById('particles');
+  const particleCount = 30;
+  
+  for (let i = 0; i < particleCount; i++) {
+    const particle = document.createElement('div');
+    particle.classList.add('particle');
+    
+    // Random size between 3px and 8px
+    const size = Math.random() * 5 + 3;
+    particle.style.width = `${size}px`;
+    particle.style.height = `${size}px`;
+    
+    // Random position
+    particle.style.left = `${Math.random() * 100}%`;
+    particle.style.top = `${Math.random() * 100}%`;
+    
+    // Random animation duration
+    const duration = Math.random() * 20 + 15;
+    particle.style.animationDuration = `${duration}s`;
+    
+    // Random delay
+    particle.style.animationDelay = `${Math.random() * 5}s`;
+    
+    container.appendChild(particle);
+  }
+}
+
+// Show toast notification
+function showToast(message, type = 'info') {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  
+  // Set color based on type
+  if (type === 'success') {
+    toast.style.borderLeftColor = 'var(--success)';
+  } else if (type === 'error') {
+    toast.style.borderLeftColor = 'var(--danger)';
+  } else {
+    toast.style.borderLeftColor = 'var(--accent)';
+  }
+  
+  toast.classList.add('show');
+  
+  // Hide after 3 seconds
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
+
+function toggleSidebar(){ 
+  document.getElementById("sidebar").classList.toggle("active"); 
+}
+
+function showSection(id){
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active-section"));
+  document.getElementById(id).classList.add("active-section");
+  toggleSidebar();
+  
+  // If wheel section is shown, redraw the wheel
+  if (id === 'wheelSection') {
+    setTimeout(drawWheel, 100);
+  }
+}
+
+/* 🔹 fungsi order WA untuk shop */
+function orderWA(produk, harga){
+  let username = document.getElementById("username").value;
+  let payment = document.getElementById("payment").value;
+  if(!username || !payment){ 
+    showToast("Isi Username & pilih pembayaran!", 'error');
+    return; 
+  }
+  let nomorWA = "6283119176901";
+  let pesan = `Halo Admin, saya mau beli:\n\n🪙 Produk: ${produk}\n💰 Harga: ${harga}\n👤 Username Roblox: ${username}\n💳 Payment: ${payment}\n\nTolong diproses ya 🙏`;
+  window.location.href = `https://wa.me/${nomorWA}?text=${encodeURIComponent(pesan)}`;
+}
+
+/* 🔹 fungsi pet untuk Pet Shop */
+function pet(produk, harga){  
+  let username = document.getElementById("petUsername").value;  
+  let payment = document.getElementById("petPayment").value;  
+  if(!username || !payment){  
+    showToast("Isi Username & pilih pembayaran di Pet Shop!", 'error');  
+    return;  
+  }  
+  let nomorWA = "6283119176901";  
+  let pesan = `Halo Admin, saya mau beli (Pet Shop):\n\n🐾 Produk: ${produk}\n💰 Harga: ${harga}\n👤 Username Roblox: ${username}\n💳 Payment: ${payment}\n\nTolong diproses ya 🙏`;  
+  window.location.href = `https://wa.me/${nomorWA}?text=${encodeURIComponent(pesan)}`;  
+}
+
+/* Spin wheel code */
+const names = ["Ali","Beatriz","Charles","Diya","Eric","Fatima","Gabriel","Hanna","Buah","Jeruk","Nanas","Pisang"];
+const colors = ["#f44336","#2196f3","#4caf50","#ffeb3b","#9c27b0","#ff9800","#00bcd4","#e91e63","#ff5722","#3f51b5","#ED8B10","#ffc107"];
+let startAngle = 0, arc = Math.PI/(names.length/2), spinAngle = 0, spinTimeout = null, lastSoundIndex = -1;
+const canvas = document.getElementById("wheel"), ctx = canvas.getContext("2d");
+const cajche = new Audio("https://www.soundjay.com/mechanical/sounds/click-02.mp3"); 
+const spinStart = new Audio("https://www.soundjay.com/button/sounds/button-09.mp3");
+const winSound = new Audio("https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3");
+const loseSound = new Audio("https://www.soundjay.com/button/sounds/beep-07.mp3");
+
+const bgMusic = new Audio("https://www.bensound.com/bensound-music/bensound-funkyelement.mp3"); 
+bgMusic.loop = true; 
+let musicOn = false;
+
+function toggleMusic(){ 
+  if (musicOn) {
+    bgMusic.pause();
+    showToast('Musik dimatikan');
+  } else {
+    bgMusic.play().catch(e => console.log('Autoplay prevented: ', e));
+    showToast('Musik dihidupkan');
+  }
+  musicOn = !musicOn; 
+}
+
+const fruitChances = { "Buah": 0.007, "Jeruk": 0.01, "Nanas": 0.011, "Pisang": 0.015 };
+
+function drawWheel(){ 
+  let outsideRadius = 180, textRadius = 140, insideRadius = 50; 
+  ctx.clearRect(0, 0, 400, 400);
+  
+  // Draw wheel border
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = 'var(--accent)';
+  ctx.beginPath();
+  ctx.arc(200, 200, outsideRadius + 2, 0, 2 * Math.PI);
+  ctx.stroke();
+  
+  for(let i = 0; i < names.length; i++){ 
+    let angle = startAngle + i * arc; 
+    ctx.fillStyle = colors[i % colors.length];
+    
+    ctx.beginPath(); 
+    ctx.arc(200, 200, outsideRadius, angle, angle + arc, false); 
+    ctx.arc(200, 200, insideRadius, angle + arc, angle, true); 
+    ctx.fill(); 
+    ctx.save();
+    
+    ctx.fillStyle = "white"; 
+    ctx.font = "bold 14px Arial";
+    ctx.translate(200 + Math.cos(angle + arc/2) * textRadius, 200 + Math.sin(angle + arc/2) * textRadius); 
+    ctx.rotate(angle + arc/2);
+    let text = names[i]; 
+    ctx.fillText(text, -ctx.measureText(text).width/2, 0); 
+    ctx.restore();
+  }
+  
+  // Draw center circle
+  ctx.fillStyle = "var(--accent)";
+  ctx.beginPath();
+  ctx.arc(200, 200, insideRadius - 5, 0, 2 * Math.PI);
+  ctx.fill();
+  
+  // Draw pointer
+  ctx.fillStyle = "var(--accent)";
+  ctx.beginPath();
+  ctx.moveTo(190, 20);
+  ctx.lineTo(210, 20);
+  ctx.lineTo(200, 60);
+  ctx.fill();
+}
+
+function rotateWheel(){ 
+  spinAngle *= 0.97; 
+  if(spinAngle <= 0.2){ 
+    clearTimeout(spinTimeout);
+    let degrees = (startAngle * 180/Math.PI) + 90; 
+    let arcd = (arc * 180/Math.PI);
+    let index = Math.floor(((360 - (degrees % 360)) % 360) / arcd); 
+    index = (index + names.length) % names.length;
+    let winner = names[index]; 
+    let hasil = document.getElementById("hasil");
+    
+    if(fruitChances[winner]){ 
+      let roll = Math.random();
+      if(roll <= fruitChances[winner]){ 
+        hasil.innerText = "🍀 JACKPOT!!! " + winner; 
+        winSound.play(); 
+        showPrizeModal(winner);
+        showToast('Selamat! Anda mendapatkan JACKPOT!', 'success');
+      } else { 
+        hasil.innerText = "😢 Hampir dapat " + winner; 
+        loseSound.play(); 
+        showToast('Hampir dapat jackpot! Coba lagi!', 'info');
+      }
+    } else { 
+      hasil.innerText = "🎉 Pemenang: " + winner; 
+      winSound.play(); 
+      showPrizeModal(winner);
+      showToast('Selamat! Anda memenangkan hadiah!', 'success');
+    }
+    
+    document.getElementById("spinBtn").disabled = false;
+    localStorage.removeItem("memberCode"); 
+    return;
+  }
+  
+  startAngle += (spinAngle * Math.PI) / 180;
+  let degrees = (startAngle * 180) / Math.PI + 90; 
+  let arcd = (arc * 180) / Math.PI;
+  let currentIndex = Math.floor(((360 - degrees % 360) % 360) / arcd);
+  
+  if(currentIndex !== lastSoundIndex){ 
+    cajche.currentTime = 0; 
+    cajche.play(); 
+    lastSoundIndex = currentIndex; 
+  }
+  
+  drawWheel(); 
+  spinTimeout = setTimeout(rotateWheel, 30); 
+}
+
+function spin(){ 
+  if(document.getElementById("spinBtn").disabled) return;
+  document.getElementById("spinBtn").disabled = true; 
+  spinAngle = Math.random() * 30 + 40; 
+  lastSoundIndex = -1; 
+  spinStart.play(); 
+  rotateWheel(); 
+}
+
+function cekPW(){ 
+  const input = document.getElementById("userPW").value; 
+  const saved = localStorage.getItem("memberCode");
+  
+  if(!saved){ 
+    showToast("Kode salah atau belum dibuat!", 'error');
+    return; 
+  }
+  
+  const {code, expiry} = JSON.parse(saved); 
+  if(Date.now() > expiry){ 
+    showToast("⏰ Kode expired!", 'error');
+    localStorage.removeItem("memberCode"); 
+    return; 
+  }
+  
+  if(input === code){ 
+    document.getElementById("loginBox").style.display = "none"; 
+    document.getElementById("wheelBox").style.display = "block"; 
+    drawWheel();
+    showToast('Berhasil masuk! Silakan putar roda.', 'success');
+  } else {
+    showToast("Kode salah!", 'error');
+  }
+}
+
+function toggleAdmin(){ 
+  const panel = document.getElementById("adminPanel");
+  if(panel.style.display === "block"){ 
+    panel.style.display = "none"; 
+  } else { 
+    let pw = prompt("Masukkan password admin:");
+    if(pw === "Gobel123"){ 
+      panel.style.display = "block"; 
+      loadAdminLogs(); 
+      showToast('Panel admin dibuka', 'success');
+    } else {
+      showToast("Password salah!", 'error');
+    }
+  } 
+}
+
+function generatePW(){ 
+  const code = Math.random().toString(36).slice(-6).toUpperCase(); 
+  const expiry = Date.now() + (5 * 60 * 1000);
+  document.getElementById("pwDisplay").innerText = code; 
+  localStorage.setItem("memberCode", JSON.stringify({code, expiry}));
+  showToast('Kode baru dibuat! Berlaku 5 menit.', 'success');
+}
+
+function showPrizeModal(prize){ 
+  let code = "PRZ-" + Math.random().toString(36).substr(2, 6).toUpperCase();
+  document.getElementById("prizeText").innerText = "Kamu mendapatkan: " + prize; 
+  document.getElementById("prizeCode").innerText = "Kode Klaim: " + code;
+  document.getElementById("prizeModal").style.display = "flex";
+  
+  let logs = JSON.parse(localStorage.getItem("adminLogs") || "[]"); 
+  logs.unshift({prize, code, time: new Date().toLocaleString()}); 
+  localStorage.setItem("adminLogs", JSON.stringify(logs)); 
+}
+
+function claimPrize(){ 
+  showToast("✅ Hadiah berhasil diklaim! Screenshot dan hubungi admin.", 'success');
+  document.getElementById("prizeModal").style.display = "none"; 
+}
+
+function loadAdminLogs(){ 
+  const logs = JSON.parse(localStorage.getItem("adminLogs") || "[]"); 
+  let html = ""; 
+  logs.forEach(l => { 
+    html += `<div>🎁 ${l.prize}<br><small>${l.code} - ${l.time}</small></div><hr>`; 
+  });
+  document.getElementById("adminLogs").innerHTML = html || "<i>Belum ada hadiah</i>"; 
+}
+
+// Initialize the page
+window.onload = function() {
+  createParticles();
+  drawWheel();
+  
+  // Try to preload music
+  bgMusic.load();
+  
+  // Check if we're on a mobile device
+  if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    // Add mobile-specific adjustments if needed
+  }
+};
+</script>
+</body>
+</html>
