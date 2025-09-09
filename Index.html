@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sheckless Hub</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <button id="menuBtn">☰</button>
+
+  <div id="sidebar">
+    <h3>Menu</h3>
+    <button data-section="homeSection">🏠 Home</button>
+    <button data-section="wheelSection">🎡 Spin Wheel</button>
+    <button data-section="shopSection">💰 Sheckless Shop</button>
+    <button data-section="PetSection">🐾Pet Shop</button>
+    <a href="https://discord.gg/yourserver" target="_blank">💬 | Join Discord</a>
+    <button id="musicToggle">🎵 Musik</button>
+    <button id="adminToggle">🜲️ Admin Panel</button>
+  </div>
+
+  <!-- PAGE AWAL -->
+  <div id="homeSection" class="section active-section">
+    <h1>✨ Selamat Datang di Zen ✨</h1>
+    <p>Tempat Belanja Item Blox Fruit Favoritmu & GROW A GARDEN 🎡💰</p>
+    <p>Setiap Bergabung Ke Discord Akan mendapatkan 1x Spin<p>
+    <button data-section="wheelSection">🎮 Mulai Sekarang</button>
+  </div>
+
+  <!-- SPIN WHEEL -->
+  <div id="wheelSection" class="section">
+    <h1>Zen Shop Gacha - Blox Fruit</h1>
+    <div id="loginBox">
+      <p>Masukkan Kode dari Admin:</p>
+      <input type="password" id="userPW" placeholder="Kode Member">
+      <button id="loginBtn">Masuk</button>
+    </div>
+    <div id="wheelBox">
+      <h2>Putar Roda 🎡</h2>
+      <canvas id="wheel" width="400" height="400"></canvas><br>
+      <button id="spinBtn">SPIN</button>
+      <p id="hasil"></p>
+    </div>
+  </div>
+
+  <!-- SHOP -->
+  <div id="shopSection" class="section">
+    <h1>💰 Sheckless Shop</h1>
+    <div class="form-box">
+      <h3>Informasi Pembeli</h3>
+      <div class="form-group">
+        <label>Username Roblox</label>
+        <input type="text" id="username" placeholder="Masukkan username Roblox">
+      </div>
+      <div class="form-group">
+        <label>💳 Pilih Payment</label>
+        <select id="payment">
+          <option value="">-- Pilih Metode --</option>
+          <option value="Dana">Dana</option>
+          <option value="QRIS">QRIS</option>
+          <option value="Saweria">Saweria</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="shop-grid">
+      <div class="shop-item">
+        <img src="https://via.placeholder.com/100x100/333333/FFFFFF?text=20+Sx+Coin" alt="20 Sx Coin">
+        <h3>20 Sx Coin</h3>
+        <p class="price">Rp5.000</p>
+        <button class="buy-btn" data-product="20 Sx Coin" data-price="Rp5.000">Beli Sekarang</button>
+      </div>
+      <div class="shop-item">
+        <img src="https://via.placeholder.com/100x100/333333/FFFFFF?text=30+Sx+Coin" alt="30 Sx Coin">
+        <h3>30 Sx Coin</h3>
+        <p class="price">Rp7.500</p>
+        <button class="buy-btn" data-product="30 Sx Coin" data-price="Rp7.500">Beli Sekarang</button>
+      </div>
+      <div class="shop-item">
+        <img src="https://via.placeholder.com/100x100/333333/FFFFFF?text=50+Sx+Coin" alt="50 Sx Coin">
+        <h3>50 Sx Coin</h3>
+        <p class="price">Rp12.500</p>
+        <button class="buy-btn" data-product="50 Sx Coin" data-price="Rp12.500">Beli Sekarang</button>
+      </div>
+      <div class="shop-item">
+        <img src="https://via.placeholder.com/100x100/333333/FFFFFF?text=100+Sx+Coin" alt="100 Sx Coin">
+        <h3>100 Sx Coin</h3>
+        <p class="price">Rp25.000</p>
+        <button class="buy-btn" data-product="100 Sx Coin" data-price="Rp25.000">Beli Sekarang</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- PET SHOP -->
+  <div id="PetSection" class="section">  
+    <h1>🐾Pet Shop</h1>  
+    <div class="form-box">  
+      <h3>Informasi Pembeli</h3>  
+      <div class="form-group">  
+        <label>Username Roblox</label>  
+        <input type="text" id="petUsername" placeholder="Masukkan username Roblox">  
+      </div>  
+      <div class="form-group">  
+        <label>💳 Pilih Payment</label>  
+        <select id="petPayment">  
+          <option value="">-- Pilih Metode --</option>  
+          <option value="Dana">Dana</option>  
+          <option value="QRIS">QRIS</option>  
+          <option value="Saweria">Saweria</option>  
+        </select>  
+      </div>  
+    </div>  
+
+    <div class="shop-grid">  
+      <div class="shop-item">  
+        <img src="https://via.placeholder.com/100x100/333333/FFFFFF?text=MOONCAT" alt="Mooncat">
+        <h3>MOONCAT</h3>
+        <h3>Stock: 1</h3>
+        <p class="price">Rp5.000</p>  
+        <button class="pet-btn" data-product="Mooncat" data-price="Rp5.000">Beli Sekarang</button>  
+      </div>  
+      <div class="shop-item">  
+        <img src="https://via.placeholder.com/100x100/333333/FFFFFF?text=Pet+2" alt="Pet 2">
+        <h3>Pet 2</h3>
+        <p class="price">Rp7.500</p>  
+        <button class="pet-btn" data-product="Pet 2" data-price="Rp7.500">Beli Sekarang</button>  
+      </div>  
+      <div class="shop-item">  
+        <img src="https://via.placeholder.com/100x100/333333/FFFFFF?text=Pet+3" alt="Pet 3">
+        <h3>Pet 3</h3>
+        <p class="price">Rp12.500</p>  
+        <button class="pet-btn" data-product="Pet 3" data-price="Rp12.500">Beli Sekarang</button>  
+      </div>  
+      <div class="shop-item">  
+        <img src="https://via.placeholder.com/100x100/333333/FFFFFF?text=Pet+4" alt="Pet 4">
+        <h3>Pet 4</h3>
+        <p class="price">Rp25.000</p>  
+        <button class="pet-btn" data-product="Pet 4" data-price="Rp25.000">Beli Sekarang</button>  
+      </div>  
+    </div>  
+  </div>
+
+  <!-- Admin Panel -->
+  <div id="adminPanel">
+    <h3>⚙️ Admin Panel</h3>
+    <button id="generateCodeBtn">Generate Code</button>
+    <p id="pwDisplay">Belum digenerate</p>
+    <h4>📜 Riwayat Hadiah</h4>
+    <div id="adminLogs"></div>
+  </div>
+
+  <!-- Modal Prize -->
+  <div id="prizeModal">
+    <div class="content">
+      <h2>🎁 Selamat!</h2>
+      <p id="prizeText"></p>
+      <p id="prizeCode"></p>
+      <button id="claimPrizeBtn">Klaim Hadiah</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
